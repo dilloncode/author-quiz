@@ -48,20 +48,30 @@ const authors = [
 
 function getTurnData(authors) {
   const allBooks = authors.reduce((p, c, i) => p.concat(c.books), []);
-  const fourRandomBooks = shuffle(allBooks).slice(0,4);
+  const fourRandomBooks = shuffle(allBooks).slice(0, 4);
   const answer = sample(fourRandomBooks);
 
   return {
     books: fourRandomBooks,
     author: authors.find((author) =>
-      author.books.some((title) => 
+      author.books.some((title) =>
         title === answer)),
   }
 }
 
 const state = {
-  turnData: getTurnData(authors)
+  turnData: getTurnData(authors),
+  highlight: '',
 }
 
-ReactDOM.render(<AuthorQuiz {...state} />, document.getElementById('root'));
+function onAnswerSelected(answer) {
+  const isCorrect = state.turnData.author.books.some(book => book === answer);
+  state.highlight = isCorrect ? 'correct' : 'wrong';
+  render();
+}
+
+function render() {
+  ReactDOM.render(<AuthorQuiz {...state} onAnswerSelected={onAnswerSelected} />, document.getElementById('root'));
+}
+render();
 registerServiceWorker();
